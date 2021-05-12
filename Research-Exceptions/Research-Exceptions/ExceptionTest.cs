@@ -55,6 +55,7 @@ namespace Research_Exceptions
             catch (Exception e)
             {
                 Console.WriteLine(e.Message);
+                throw;
             }
             finally
             {
@@ -81,7 +82,7 @@ namespace Research_Exceptions
             catch (Exception e)
             {
                 Console.WriteLine("Catched error message: {0}", e.Message);
-                //throw;
+                throw;
             }
         }
         private void CustomAgeException()
