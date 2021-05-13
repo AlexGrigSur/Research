@@ -25,18 +25,16 @@ namespace Research_Reflections
             Console.WriteLine("***************");
             Console.WriteLine("Choose method to sort or empty string to exit:");
         }
-
         public void Start()
         {
-            ActivatorClass.ActivatorCreateInstance();
-            //beginSort(SortMethods[1]);
+            //ActivatorClass.ActivatorCreateInstance();
+            beginSort(SortMethods[1]);
 
             //PrintMenu();
             //string result = Console.ReadLine();
             //int inputResult;
             //// TODO: CHOOSE SORT METHOD
         }
-
         private void beginSort(ISort method)
         {
             int[] GenerateArray(int count)
@@ -52,7 +50,8 @@ namespace Research_Reflections
                 return array;
             }
 
-            var propertyList = method.GetType().GetProperties();
+            string attributePropertyValue = GetCustomAttributes.GetAttribute(method);
+            Console.WriteLine(attributePropertyValue);
 
             // TODO: GET CLASS PROPERTY FIELD
             // TODO: IF NOT PREFERABLE - ASK USER TO CONTINUE
