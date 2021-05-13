@@ -9,19 +9,23 @@ namespace Research_Reflections
 {
     public class ActivatorClass
     {
-        static public void ActivatorCreateInstance()
+        static public void ActivatorCreateInstance<T>(string typeName) where T:class
         {
+            Console.WriteLine("*******************************");
+            Console.WriteLine(typeof(T).Name);
+
             // Typeof instance
-            var bubbleActivatorObject = (BubbleSort)Activator.CreateInstance(typeof(BubbleSort));
-            Console.WriteLine(bubbleActivatorObject.SortName);
+            var typeOfInstance = (T)Activator.CreateInstance(typeof(T));
+            Console.WriteLine("typeOfInstance:{0}",typeOfInstance.GetType());
 
             // Assembly instance
-            var selectionActivatorObject = (SelectionSort)Activator.CreateInstance(null, "Research_Reflections.Classes.SelectionSort").Unwrap();
-            Console.WriteLine(selectionActivatorObject.SortName);
+            // "Research_Reflections.Classes.SelectionSort"
+            var assemblyInstance = (T)Activator.CreateInstance(null, typeName).Unwrap();
+            Console.WriteLine("assemblyInstance:{0}", assemblyInstance.GetType());
 
             // Generic instance
-            var selectionActivatorGenericType = Activator.CreateInstance<SelectionSort>();
-            Console.WriteLine(selectionActivatorGenericType.SortName);
+            var genericInstance = Activator.CreateInstance<T>();
+            Console.WriteLine("genericInstance:{0}", genericInstance.GetType());
         }
     }
 }

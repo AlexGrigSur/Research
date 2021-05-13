@@ -26,5 +26,6 @@ namespace Research_Reflections.Classes
         }
         private string Complexity { get; set; } = "O(n^2)";
         public string SortName { get; set; } = "Bubble Sort";
+        private int reflectionField = 10;
     }
 }

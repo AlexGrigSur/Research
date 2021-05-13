@@ -20,8 +20,12 @@ namespace Research_Reflections.Classes
 
         public string SortName { get; set; } = "Selection Sort";
 
-        // private field for reflection 
+        // private property for reflection 
         private string Complexity { get; set; } = "O(n^2)";
+
+        //private field for reflection
+        private int reflectionField = 10;
+
         protected void Swap(ref int firstIndex, ref int secondIndex)
         {
             int temp = firstIndex;
