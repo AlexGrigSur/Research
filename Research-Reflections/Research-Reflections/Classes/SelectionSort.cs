@@ -18,8 +18,10 @@ namespace Research_Reflections.Classes
                         Swap(ref array[i], ref array[j]);
         }
 
-        public string SortName { get; set; }
+        public string SortName { get; set; } = "Selection Sort";
 
+        // private field for reflection 
+        private string Complexity { get; set; } = "O(n^2)";
         protected void Swap(ref int firstIndex, ref int secondIndex)
         {
             int temp = firstIndex;

@@ -24,7 +24,7 @@ namespace Research_Reflections.Classes
                     if (array[j] > array[j + 1])
                         Swap(ref array[j], ref array[j + 1]);
         }
-
+        private string Complexity { get; set; } = "O(n^2)";
         public string SortName { get; set; } = "Bubble Sort";
     }
 }

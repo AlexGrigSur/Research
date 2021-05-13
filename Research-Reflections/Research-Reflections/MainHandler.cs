@@ -26,14 +26,15 @@ namespace Research_Reflections
             Console.WriteLine("Choose method to sort or empty string to exit:");
         }
 
-
-
         public void Start()
         {
-            PrintMenu();
-            string result = Console.ReadLine();
-            int inputResult;
-            // TODO: CHOOSE SORT METHOD
+            ActivatorClass.ActivatorCreateInstance();
+            //beginSort(SortMethods[1]);
+
+            //PrintMenu();
+            //string result = Console.ReadLine();
+            //int inputResult;
+            //// TODO: CHOOSE SORT METHOD
         }
 
         private void beginSort(ISort method)
