@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Research_Reflections
+﻿namespace Research_Reflections
 {
     class Program
     {

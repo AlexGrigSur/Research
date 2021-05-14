@@ -2,78 +2,68 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using Research_Reflections.Attributes;
 using Research_Reflections.Classes;
 using Research_Reflections.Reflections;
 
 namespace Research_Reflections
 {
-    class MainHandler
+    public class MainHandler
     {
-        private ISort[] SortMethods = new ISort[]
-        {
-            new BubbleSort(),
-            new SelectionSort()
-        };
-
         public void Start()
         {
-            ActivatorClassTestSystem();
-            GetCustomAttributes.GetAttribute/*<IsPreferableAttribute>*/(SortMethods[1]);
-            ReflectionTestSystem(SortMethods[1]);
+            // ex #1
+            var typesList = GetTypesFromCurrentAssembly<IsPreferableAttribute>();
+            
+            // ex #2
+            var instanceList = ActivatorCreateInstance(typesList);
+
+            // ex #3-4
+            for (int i = 0; i < instanceList.Count; i++)
+            {
+                ReflectionTestSystem(instanceList[i], "<SortName>k__BackingField", "SAY HELLO TO MY LITTLE SORT");
+            }
         }
 
-        private void ActivatorClassTestSystem()
+        private List<Type> GetTypesFromCurrentAssembly<TAttribute>() where TAttribute : Attribute
+        {
+            var typeList = from type in Assembly.GetExecutingAssembly().GetTypes()
+                where type.IsClass && type.GetCustomAttributes(typeof(TAttribute))!=null && type.GetInterfaces().Contains(typeof(ISort)) // ISort to generic?
+                select type;
+            return typeList.ToList();
+        }
+        private List<object> ActivatorCreateInstance(List<Type> typesToCreate)
+        {
+            List<object> result = new List<object>(typesToCreate.Count);
+
+            // try..catch?
+            for (int i = 0; i < typesToCreate.Count; i++)
+            {
+                var assemblyInstance = Activator.CreateInstance(typesToCreate[i]);
+                result.Add(assemblyInstance);
+            }
+            return result;
+        }
+        private void ReflectionTestSystem(object objectToReflect, string fieldToChange, object valueToChange)
         {
             try
             {
-                ActivatorClass.ActivatorCreateInstance<BubbleSort>("Research_Reflections.Classes.BubbleSort");
-                ActivatorClass.ActivatorCreateInstance<SelectionSort>("Research_Reflections.Classes.SelectionSort");
+                Console.WriteLine("***********************");
+                Console.WriteLine(objectToReflect.GetType());
+                Console.WriteLine("GET");
+                ReflectionsManipulator.GetFields(objectToReflect);
+                Console.WriteLine("-----------------------");
+                Console.WriteLine("SET");
+                ReflectionsManipulator.SetFields(objectToReflect,fieldToChange,valueToChange);
+                Console.WriteLine("{0}:{1}", fieldToChange, valueToChange);
+                Console.WriteLine("-----------------------");
+                Console.WriteLine("GET CHANGED");
+                ReflectionsManipulator.GetFields(objectToReflect);
             }
             catch (Exception e)
             {
                 Console.WriteLine(e);
             }
         }
-        private void ReflectionTestSystem(ISort sortMethod)
-        {
-            Console.WriteLine("********************************");
-            Console.WriteLine("Reflection Get/Set");
-            try
-            {
-                ReflectionsManipulator.GetFields(sortMethod);
-                ReflectionsManipulator.SetFields(sortMethod, "reflectionField", "hello");
-                ReflectionsManipulator.GetFields(sortMethod);
-            }
-            catch(Exception e)
-            {
-                Console.WriteLine("Reflection Test System Error:{0}", e.Message);
-            }
-        }
-
-        //private void beginSort(ISort method)
-        //{
-        //    int[] GenerateArray(int count)
-        //    {
-        //        if (count < 1)
-        //            throw new ArgumentOutOfRangeException("Elements count less that 1");
-
-        //        int[] array = new int[count];
-
-        //        for (int i = 0; i < count; ++i)
-        //            array[count - i - 1] = i;
-
-        //        return array;
-        //    }
-
-        //    //string attributePropertyValue = GetCustomAttributes.GetAttribute(method);
-        //    //Console.WriteLine(attributePropertyValue);
-
-        //    // TODO: GET CLASS PROPERTY FIELD
-        //    // TODO: IF NOT PREFERABLE - ASK USER TO CONTINUE
-        //    // TODO: THEN CALL SORT METHOD
-        //}
     }
 }

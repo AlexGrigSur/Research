@@ -2,7 +2,7 @@
 {
     interface ISort
     {
-        void Sort(int[] array);
-        string SortName { get; set; }
+        public void Sort(int[] array);
+        public string SortName { get; set; }
     }
 }

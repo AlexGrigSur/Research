@@ -2,11 +2,14 @@
 
 namespace Research_Reflections.Attributes
 {
+    [AttributeUsage(AttributeTargets.Class)]
     class IsPreferableAttribute : Attribute
     {
-        public bool isPreferableProperty { get; private set; }
+        public bool IsPreferableProperty { get; private set; }
 
-        public IsPreferableAttribute(bool _isPreferable) =>
-            isPreferableProperty = _isPreferable;
+        public IsPreferableAttribute(bool isPreferable)
+        {
+            IsPreferableProperty = isPreferable;
+        }
     }
 }

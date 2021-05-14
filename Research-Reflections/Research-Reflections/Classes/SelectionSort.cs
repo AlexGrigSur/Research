@@ -1,15 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Research_Reflections.Attributes;
+﻿using Research_Reflections.Attributes;
 
 namespace Research_Reflections.Classes
 {
     [IsPreferableAttribute(true)]
     class SelectionSort : ISort
     {
+        private int _reflectionField = 10;
+
+        public string SortName { get; set; } = "Selection Sort";
+        private string сomplexity { get; set; } = "O(n^2)";
+
         public void Sort(int[] array)
         {
             for (int i = 0; i < array.Length; ++i)
@@ -17,14 +17,6 @@ namespace Research_Reflections.Classes
                     if (array[i] > array[j])
                         Swap(ref array[i], ref array[j]);
         }
-
-        public string SortName { get; set; } = "Selection Sort";
-
-        // private property for reflection 
-        private string Complexity { get; set; } = "O(n^2)";
-
-        //private field for reflection
-        private int reflectionField = 10;
 
         protected void Swap(ref int firstIndex, ref int secondIndex)
         {
