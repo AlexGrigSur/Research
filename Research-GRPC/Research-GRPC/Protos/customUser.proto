@@ -1,0 +1,21 @@
+﻿syntax = "proto3";
+option csharp_namespace = "Research_GRPC";
+
+service UsersHandler {
+	rpc GetRequest(UserID) returns(UserModel);
+	rpc GetAllUsers(Empty) returns(stream UserModel);
+	rpc SetRequest(UserModel) returns(UserID);
+}
+
+message Empty{ }
+
+message UserID {
+	int32 id = 1;
+}
+
+message UserModel {
+	string firstName = 1;
+	string lastName = 2;
+	string email = 3;
+	string password = 4;
+}
