@@ -21,15 +21,18 @@ namespace Research_Reflections
             // ex #3-4
             for (int i = 0; i < instanceList.Count; i++)
             {
-                ReflectionTestSystem(instanceList[i], "<SortName>k__BackingField", "SAY HELLO TO MY LITTLE SORT");
+                ReflectionTestSystem(instanceList[i], nameof(ISort.SortName), "SAY HELLO TO MY LITTLE SORT");
             }
         }
 
         private List<Type> GetTypesFromCurrentAssembly<TAttribute>() where TAttribute : Attribute
         {
-            var typeList = from type in Assembly.GetExecutingAssembly().GetTypes()
-                where type.IsClass && type.GetCustomAttributes(typeof(TAttribute))!=null && type.GetInterfaces().Contains(typeof(ISort)) // ISort to generic?
-                select type;
+            var interfaceType = typeof(ISort);
+            var typeList = Assembly.GetExecutingAssembly()
+                .GetTypes()
+                .Where(type =>
+                    type.IsClass && type.GetCustomAttributes<TAttribute>() != null &&
+                    interfaceType.IsAssignableFrom(type));
             return typeList.ToList();
         }
         private List<object> ActivatorCreateInstance(List<Type> typesToCreate)
@@ -44,21 +47,21 @@ namespace Research_Reflections
             }
             return result;
         }
-        private void ReflectionTestSystem(object objectToReflect, string fieldToChange, object valueToChange)
+        private void ReflectionTestSystem(object objectToReflect, string propertyToChange, object valueToChange)
         {
             try
             {
                 Console.WriteLine("***********************");
                 Console.WriteLine(objectToReflect.GetType());
                 Console.WriteLine("GET");
-                ReflectionsManipulator.GetFields(objectToReflect);
+                ReflectionsManipulator.GetProperty(objectToReflect, propertyToChange);
                 Console.WriteLine("-----------------------");
                 Console.WriteLine("SET");
-                ReflectionsManipulator.SetFields(objectToReflect,fieldToChange,valueToChange);
-                Console.WriteLine("{0}:{1}", fieldToChange, valueToChange);
+                ReflectionsManipulator.SetProperty(objectToReflect, propertyToChange, valueToChange);
+                Console.WriteLine("{0}:{1}", propertyToChange, valueToChange);
                 Console.WriteLine("-----------------------");
                 Console.WriteLine("GET CHANGED");
-                ReflectionsManipulator.GetFields(objectToReflect);
+                ReflectionsManipulator.GetProperty(objectToReflect, propertyToChange);
             }
             catch (Exception e)
             {

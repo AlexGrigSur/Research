@@ -14,33 +14,25 @@ namespace Research_Reflections.Reflections
                 Console.WriteLine($"{member.Name}");
             }
         }
-        public static void GetFields(object objectToScan)
+        public static void GetProperty(object objectToScan, string propertyName)
         {
             Type type = objectToScan.GetType();
-            var fieldList = type.GetFields(BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.GetProperty);
-            foreach (var field in fieldList)
+            var property = type.GetProperty(propertyName);
+            if (property == null)
             {
-                Console.WriteLine($"{field.Name}:{field.GetValue(objectToScan)}");
+                return;
             }
+            Console.WriteLine($"{property.Name}:{property.GetValue(objectToScan)}");
         }
-        public static void SetFields(object objectToScan, string fieldToSet, object valueToSet)
+        public static void SetProperty(object objectToScan, string propToSet, object valueToSet)
         {
             Type type = objectToScan.GetType();
-            var fieldList = type.GetFields(BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.GetProperty);
-            foreach (var field in fieldList)
+            var property = type.GetProperty(propToSet);
+            if (property == null)
             {
-                if (field.Name == fieldToSet)
-                {
-                    try
-                    {
-                        field.SetValue(objectToScan, valueToSet);
-                    }
-                    catch (ArgumentException e)
-                    {
-                        Console.WriteLine("Value type doesn't match: {0}",e.Message);
-                    }
-                }
+                return;
             }
+            property.SetValue(objectToScan, valueToSet);
         }
     }
 }

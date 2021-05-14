@@ -4,12 +4,12 @@ namespace Research_Reflections.Classes
 {
 
     [IsPreferableAttribute(isPreferable: false)]
-    class BubbleSort : ISort
+    public class BubbleSort : ISort
     {
         private int _reflectionField = 10;
 
         public string SortName { get; set; } = "Bubble Sort";
-        private string сomplexity { get; set; } = "O(n^2)";
+        private string Complexity { get; set; } = "O(n^2)";
 
         public void Sort(int[] array)
         {

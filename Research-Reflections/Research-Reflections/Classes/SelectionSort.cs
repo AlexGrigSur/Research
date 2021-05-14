@@ -3,12 +3,12 @@
 namespace Research_Reflections.Classes
 {
     [IsPreferableAttribute(true)]
-    class SelectionSort : ISort
+    public class SelectionSort : ISort
     {
         private int _reflectionField = 10;
 
         public string SortName { get; set; } = "Selection Sort";
-        private string сomplexity { get; set; } = "O(n^2)";
+        private string Complexity { get; set; } = "O(n^2)";
 
         public void Sort(int[] array)
         {
