@@ -29,7 +29,7 @@ namespace Research_Reflections.Reflections
             }
         }
 
-        static public void SetFields(object objectToScan, string fieldToSet, object value)
+        static public void SetFields(object objectToScan, string fieldToSet, object valueToSet)
         {
             Type type = objectToScan.GetType();
             var fieldList = type.GetFields(BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.GetProperty);
@@ -39,11 +39,11 @@ namespace Research_Reflections.Reflections
                 {
                     try
                     {
-                        field.SetValue(objectToScan, "Hello");
+                        field.SetValue(objectToScan, valueToSet);
                     }
                     catch (ArgumentException e)
                     {
-                        field.SetValue(objectToScan, 14);
+                        Console.WriteLine("Value type doesn't match: {0}",e.Message);
                     }
                     
                 }
