@@ -13,9 +13,20 @@ namespace Research_GRPC_Client
             string connectionData = ConfigManager.GetField("ConnectionStrings");
             var channel = GrpcChannel.ForAddress(connectionData);
 
-            HelloRequest request = new HelloRequest(){Name = "Alex"};
+            HelloRequest request = new HelloRequest()
+            {
+                Name = "Alex"
+            };
 
-            var client = new Greeter.GreeterClient(channel);
+            UserModel model = new UserModel()
+            {
+                FirstName = "Hello",
+                LastName = "it",
+                Email = "is",
+                Password = "me"
+            };
+
+            var client = UsersHandler. //Greeter.GreeterClient(channel);
 
             SendMessage.Send(client,request).Wait();
             Console.ReadKey();
