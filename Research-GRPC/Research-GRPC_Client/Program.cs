@@ -10,13 +10,14 @@ namespace Research_GRPC_Client
         static void Main(string[] args)
         {
             // APPSETTINGS.JSON
-            string connectionData = ConfigManager.GetField("ConnectionStrings");
-            var channel = GrpcChannel.ForAddress(connectionData);
 
-            HelloRequest request = new HelloRequest()
-            {
-                Name = "Alex"
-            };
+
+            // make static configManager?
+            var config = new ConfigManager().GetConfiguration();
+
+            string connectionData = config["HostURL"];
+
+            var channel = GrpcChannel.ForAddress(connectionData);
 
             UserModel model = new UserModel()
             {
@@ -26,9 +27,14 @@ namespace Research_GRPC_Client
                 Password = "me"
             };
 
-            var client = UsersHandler. //Greeter.GreeterClient(channel);
+            var client = new UsersHandler.UsersHandlerClient(channel);
 
-            SendMessage.Send(client,request).Wait();
+            var replyID = client.SetRequest(model);
+            Console.WriteLine("UserID:{0}",replyID.Id);
+
+            var replyModel = client.GetRequest(replyID);
+            Console.WriteLine("FirstName:{0}", replyModel.FirstName);
+
             Console.ReadKey();
         }
     }
