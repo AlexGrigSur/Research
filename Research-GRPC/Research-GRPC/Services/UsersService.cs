@@ -8,10 +8,10 @@ using Research_GRPC.Storage;
 
 namespace Research_GRPC
 {
-    public class UserService : UsersHandler.UsersHandlerBase
+    public class UsersService : UsersHandler.UsersHandlerBase
     {
-        private readonly ILogger<UserService> _logger;
-        public UserService(ILogger<UserService> logger)
+        private readonly ILogger<UsersService> _logger;
+        public UsersService(ILogger<UsersService> logger)
         {
             _logger = logger;
         }

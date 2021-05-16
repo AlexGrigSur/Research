@@ -8,7 +8,7 @@ namespace Research_GRPC.Storage
     public static class DataStorage
     {
         // non-unique rows
-        static private List<UserModel> _storage = new List<UserModel>()
+        private static List<UserModel> _storage = new List<UserModel>()
         {
             new UserModel()
             {
@@ -33,7 +33,7 @@ namespace Research_GRPC.Storage
             }
         };
 
-        static public UserModel? GetData(int userId)
+        public static UserModel? GetData(int userId)
         {
             try
             {
@@ -44,12 +44,13 @@ namespace Research_GRPC.Storage
                 return null;
             }
         }
-        static public int SetData(UserModel model)
+        public static int SetData(UserModel model)
         {
             _storage.Add(model);
+            Console.WriteLine(_storage.Count - 1);
             return (_storage.Count - 1);
         }
-        static public UserModel[] GetAll()
+        public static UserModel[] GetAll()
         {
             var result = new UserModel[_storage.Count];
             _storage.CopyTo(result);
