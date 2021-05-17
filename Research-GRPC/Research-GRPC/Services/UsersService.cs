@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Grpc.Core;
 using Microsoft.Extensions.Logging;
 using Research_GRPC.Storage;
@@ -20,7 +17,6 @@ namespace Research_GRPC
         {
             return DataStorage.GetData(userId.Id);
         }
-
         public override async Task<UserID> SetRequest(UserModel model, ServerCallContext context)
         {
             return new UserID()
@@ -28,7 +24,6 @@ namespace Research_GRPC
                 Id = DataStorage.SetData(model)
             };
         }
-
         public override async Task GetAllUsers(Empty request, IServerStreamWriter<UserModel> responseStream,
             ServerCallContext context)
         {
