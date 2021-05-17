@@ -27,7 +27,6 @@ namespace Research_GRPC
             }
 
             var config = GetConfigurationBuilder();
-
             // if config doesn't exists or value invalid
             if (config == null || !CheckHostURL(config["HostURL"]) || !IsUserAgreeConfig(config))
             {
@@ -56,8 +55,7 @@ namespace Research_GRPC
                     _hostURL = Console.ReadLine();
                     if (CheckHostURL(_hostURL))
                         break;
-                    else
-                        Console.WriteLine("Wrong Host address. Try again");
+                    Console.WriteLine("Wrong Host address. Try again");
                 }
             }
 
@@ -67,11 +65,15 @@ namespace Research_GRPC
                 File.Delete("appsettings.json");
             }
 
-            File.Create("appsettings.json").Close();
-            File.AppendAllText("appsettings.json", JsonSerializer.Serialize(new
+            try
             {
-                HostURL = _hostURL,
-            }));
+                File.AppendAllTextAsync("appsettings.json", JsonSerializer.Serialize(("{\"HostURL\":\"{0}\"}", _hostURL)));
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
         }
         private bool CheckHostURL(string field)
         {

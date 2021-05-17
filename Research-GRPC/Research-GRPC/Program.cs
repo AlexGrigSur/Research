@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Hosting;
+﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 
 namespace Research_GRPC
@@ -9,12 +9,13 @@ namespace Research_GRPC
         public static void Main(string[] args)
         {
             CreateHostBuilder(args).Build().Run();
+ 
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args)
         {
             var config = new ConfigManager().GetConfiguration();
-
+            // сюда конфиг
             return Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
                 {

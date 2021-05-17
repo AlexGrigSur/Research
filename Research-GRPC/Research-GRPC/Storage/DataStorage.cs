@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Research_GRPC.Storage
 {
@@ -31,27 +32,23 @@ namespace Research_GRPC.Storage
             }
         };
 
-        public static UserModel? GetData(int userId)
+        public static UserModel? GetUser(int userNumber)
         {
-            try
-            {
-                return _storage[userId];
-            }
-            catch (IndexOutOfRangeException)
+            if (userNumber < 0 || userNumber >= _storage.Count)
             {
                 return null;
             }
+            return _storage[userNumber];
         }
-        public static int SetData(UserModel model)
+        public static int AddUser(UserModel model)
         {
             _storage.Add(model);
             Console.WriteLine(_storage.Count - 1);
             return (_storage.Count - 1);
         }
-        public static UserModel[] GetAll()
+        public static List<UserModel> GetAllUsers()
         {
-            var result = new UserModel[_storage.Count];
-            _storage.CopyTo(result);
+            var result = _storage.Select(x=>x).ToList();
             return result;
         }
     }

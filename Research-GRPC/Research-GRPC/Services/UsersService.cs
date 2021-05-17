@@ -13,22 +13,36 @@ namespace Research_GRPC
             _logger = logger;
         }
 
-        public override async Task<UserModel> GetRequest(UserID userId, ServerCallContext context)
+        public override Task<UserModel> GetUsers(UserNumber userNumber, ServerCallContext context)
         {
-            return DataStorage.GetData(userId.Id);
-        }
-        public override async Task<UserID> SetRequest(UserModel model, ServerCallContext context)
-        {
-            return new UserID()
+            var result = DataStorage.GetUser(userNumber.Id);
+            if (result == null)
             {
-                Id = DataStorage.SetData(model)
-            };
+                context.Status = new Status(StatusCode.NotFound, "Requested key not found");
+                return Task.FromResult(new UserModel());
+            }
+            return Task.FromResult(result);
         }
-        public override async Task GetAllUsers(Empty request, IServerStreamWriter<UserModel> responseStream,
-            ServerCallContext context)
+        public override Task<UserNumber> AddUser(UserModel model, ServerCallContext context)
         {
-            var result = DataStorage.GetAll();
-            for (int i = 0; i < result.Length; ++i)
+            return Task.FromResult(new UserNumber()
+            {
+                Id = DataStorage.AddUser(model)
+            });
+        }
+        public override Task<UserQuery> GetAllUsersCollection(Empty request, ServerCallContext context)
+        {
+            return Task.FromResult(new UserQuery()
+            {
+                ModelsList = { DataStorage.GetAllUsers() }
+            });
+        }
+
+        public override async Task GetAllUsersStream(Empty request, IServerStreamWriter<UserModel> responseStream,
+        ServerCallContext context)
+        {
+            var result = DataStorage.GetAllUsers();
+            for (int i = 0; i < result.Count; ++i)
             {
                 await Task.Delay(5000);
                 await responseStream.WriteAsync(result[i]);
