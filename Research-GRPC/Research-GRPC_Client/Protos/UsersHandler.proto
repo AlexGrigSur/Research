@@ -2,15 +2,20 @@
 option csharp_namespace = "Research_GRPC";
 
 service UsersHandler {
-	rpc GetRequest(UserID) returns(UserModel);
-	rpc GetAllUsers(Empty) returns(stream UserModel);
-	rpc SetRequest(UserModel) returns(UserID);
+	rpc GetUsers(UserNumber) returns(UserModel);
+	rpc GetAllUsersStream(Empty) returns(stream UserModel);
+	rpc GetAllUsersCollection(Empty) returns(UserQuery);
+	rpc AddUser(UserModel) returns(UserNumber);
 }
 
 message Empty{ }
 
-message UserID {
+message UserNumber {
 	int32 id = 1;
+}
+
+message UserQuery{
+	repeated UserModel model = 1;
 }
 
 message UserModel {

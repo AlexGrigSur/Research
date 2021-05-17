@@ -10,7 +10,6 @@ namespace Research_GRPC_Client
         public void BeginTest(string connectionString)
         {
             var channel = GrpcChannel.ForAddress(connectionString);
-
             var client = new UsersHandler.UsersHandlerClient(channel);
 
             GetRequest(client, 5);
@@ -19,24 +18,26 @@ namespace Research_GRPC_Client
             Console.WriteLine("*************");
             SetRequest(client);
             Console.WriteLine("*************");
-            GetAllUsers(client);
+            GetAllUsersStream(client);
+            Console.WriteLine("*************");
+            GetAllUsersCollection(client);
         }
 
         private void GetRequest(UsersHandler.UsersHandlerClient client, int id)
         {
-            UserID userID = new UserID()
+            var userID = new UserNumber()
             {
                 Id = id
             };
             try
             {
-                var reply = client.GetRequest(userID);
+                var reply = client.GetUsers(userID);
                 Console.WriteLine($"GetRequest result: FirstName - {reply.FirstName}");
             }
             catch (Grpc.Core.RpcException e)
             {
-                string error = (e.StatusCode == StatusCode.Unknown)
-                    ? "Result is null"
+                string error = (e.StatusCode == StatusCode.NotFound)
+                    ? "Empty result"
                     : "Server is unavailable";
                 Console.WriteLine(error + " {0}",e.StatusCode);
             }
@@ -45,30 +46,54 @@ namespace Research_GRPC_Client
                 Console.WriteLine("Unhandled exception: {0}",e.Message);
             }
         }
-        private async void GetAllUsers(UsersHandler.UsersHandlerClient client)
+        private async void GetAllUsersStream(UsersHandler.UsersHandlerClient client)
         {
             Console.WriteLine("GetAllUsers request");
             try
             {
-                using (var call = client.GetAllUsers(new Empty()))
+                using (var call = client.GetAllUsersStream(new Empty()))
                 {
                     while (await call.ResponseStream.MoveNext())
                     {
                         var currentReply = call.ResponseStream.Current;
-                        Console.WriteLine($"GetAllUsers reply: FirstName - {currentReply.FirstName}");
+                        Console.WriteLine($"GetAllUsersStream reply: FirstName - {currentReply.FirstName}");
                     }
                 }
             }
             catch (Grpc.Core.RpcException e)
             {
-                string error = (e.StatusCode == StatusCode.Unknown)
-                    ? "Result is null"
+                string error = (e.StatusCode == StatusCode.NotFound)
+                    ? "Empty result"
                     : "Server is unavailable";
                 Console.WriteLine(error + " {0}", e.StatusCode);
             }
             catch (Exception e)
             {
                 Console.WriteLine("Unhandled exception: {0}",e.Message);
+            }
+        }
+
+        private /*async*/ void GetAllUsersCollection(UsersHandler.UsersHandlerClient client)
+        {
+            Console.WriteLine("GetAllUsers request");
+            try
+            {
+                var result = client.GetAllUsersCollection(new Empty());//await client.GetAllUsersCollectionAsync(new Empty());
+                for (int i = 0; i < result.Model.Count; ++i)
+                {
+                    Console.WriteLine($"GetAllUsers reply: FirstName - {result.Model[i].FirstName}");
+                }
+            }
+            catch (Grpc.Core.RpcException e)
+            {
+                string error = (e.StatusCode == StatusCode.NotFound)
+                    ? "Empty result"
+                    : "Server is unavailable";
+                Console.WriteLine(error + " {0}", e.StatusCode);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Unhandled exception: {0}", e.Message);
             }
         }
         private void SetRequest(UsersHandler.UsersHandlerClient client)
@@ -83,13 +108,13 @@ namespace Research_GRPC_Client
 
             try
             {
-                var reply = client.SetRequest(model);
+                var reply = client.AddUser(model);
                 Console.WriteLine($"SetRequest result: {reply.Id}");
             }
             catch (Grpc.Core.RpcException e)
             {
                 string error = (e.StatusCode == StatusCode.Unknown)
-                    ? "Result is null"
+                    ? "Empty result"
                     : "Server is unavailable";
                 Console.WriteLine(error + " {0}", e.StatusCode);
             }
@@ -98,5 +123,6 @@ namespace Research_GRPC_Client
                 Console.WriteLine("Unhandled exception");
             }
         }
+
     }
 }
