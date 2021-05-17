@@ -33,9 +33,9 @@ namespace Research_GRPC
             ServerCallContext context)
         {
             var result = DataStorage.GetAll();
-
             for (int i = 0; i < result.Length; ++i)
             {
+                await Task.Delay(5000);
                 await responseStream.WriteAsync(result[i]);
             }
         }
