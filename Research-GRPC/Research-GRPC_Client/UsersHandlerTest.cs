@@ -2,10 +2,6 @@
 using Grpc.Net.Client;
 using Research_GRPC;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Research_GRPC_Client
 {
@@ -14,6 +10,7 @@ namespace Research_GRPC_Client
         public void BeginTest(string connectionString)
         {
             var channel = GrpcChannel.ForAddress(connectionString);
+
             var client = new UsersHandler.UsersHandlerClient(channel);
 
             GetRequest(client, 5);
@@ -36,13 +33,16 @@ namespace Research_GRPC_Client
                 var reply = client.GetRequest(userID);
                 Console.WriteLine($"GetRequest result: FirstName - {reply.FirstName}");
             }
-            catch (Grpc.Core.RpcException)
+            catch (Grpc.Core.RpcException e)
             {
-                Console.WriteLine("Result is null");
+                string error = (e.StatusCode == StatusCode.Unknown)
+                    ? "Result is null"
+                    : "Server is unavailable";
+                Console.WriteLine(error + " {0}",e.StatusCode);
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                Console.WriteLine("Unhandled exception");
+                Console.WriteLine("Unhandled exception: {0}",e.Message);
             }
         }
         private async void GetAllUsers(UsersHandler.UsersHandlerClient client)
@@ -59,9 +59,16 @@ namespace Research_GRPC_Client
                     }
                 }
             }
-            catch(Exception)
+            catch (Grpc.Core.RpcException e)
             {
-                Console.WriteLine("Unhandled exception");
+                string error = (e.StatusCode == StatusCode.Unknown)
+                    ? "Result is null"
+                    : "Server is unavailable";
+                Console.WriteLine(error + " {0}", e.StatusCode);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Unhandled exception: {0}",e.Message);
             }
         }
         private void SetRequest(UsersHandler.UsersHandlerClient client)
@@ -78,6 +85,13 @@ namespace Research_GRPC_Client
             {
                 var reply = client.SetRequest(model);
                 Console.WriteLine($"SetRequest result: {reply.Id}");
+            }
+            catch (Grpc.Core.RpcException e)
+            {
+                string error = (e.StatusCode == StatusCode.Unknown)
+                    ? "Result is null"
+                    : "Server is unavailable";
+                Console.WriteLine(error + " {0}", e.StatusCode);
             }
             catch (Exception)
             {

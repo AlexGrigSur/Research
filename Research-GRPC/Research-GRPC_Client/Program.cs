@@ -9,9 +9,7 @@ namespace Research_GRPC_Client
     {
         static void Main(string[] args)
         {
-            // make static configManager?
             var config = new ConfigManager().GetConfiguration();
-
             string connectionData = config["HostURL"];
 
             new UsersHandlerTest().BeginTest(connectionData);

@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using System.Text.Json;
 using System.IO;
@@ -11,8 +7,7 @@ namespace Research_GRPC_Client
 {
     public class ConfigManager
     {
-        private string hostURL;
-        private string maxBodySize;
+        private string _hostURL;
         public IConfiguration GetConfiguration()
         {
             IConfiguration GetConfigurationBuilder()
@@ -58,8 +53,8 @@ namespace Research_GRPC_Client
                 while (true)
                 {
                     Console.Write("Input HostURL: ");
-                    hostURL = Console.ReadLine();
-                    if (CheckHostURL(hostURL))
+                    _hostURL = Console.ReadLine();
+                    if (CheckHostURL(_hostURL))
                         break;
                     else
                         Console.WriteLine("Wrong Host address. Try again");
@@ -71,7 +66,7 @@ namespace Research_GRPC_Client
             File.Create("appsettings.json").Close();
             File.AppendAllText("appsettings.json", JsonSerializer.Serialize(new 
             {  
-                HostURL = hostURL, 
+                HostURL = _hostURL, 
             }));
         }
         private bool CheckHostURL(string field)
