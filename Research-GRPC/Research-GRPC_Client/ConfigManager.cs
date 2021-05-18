@@ -26,13 +26,15 @@ namespace Research_GRPC_Client
 
                 try
                 {
-                    File.AppendAllText("appsettings.json",
-                        JsonSerializer.Serialize(("{\"HostURL\":\"{0}\"}", hostURL)));
+                    File.Delete("appsettings.json");
+                    File.AppendAllText("appsettings.json", @"{""HostURL"":""" + hostURL + @"""}");
+                    //JsonSerializer.Serialize(@"{""HostURL"":""hostURL""}")); //, options)
+                    //JsonSerializer.Serialize(new {hostURL = hostURL}));
                 }
                 catch (Exception e)
                 {
                     Console.WriteLine(e);
-                    // ???
+                    return null;
                 }
 
                 config = GetConfigurationBuilder();
