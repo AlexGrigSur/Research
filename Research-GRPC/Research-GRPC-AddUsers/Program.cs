@@ -7,9 +7,9 @@ using Research_GRPC_Client;
 
 namespace Research_GRPC_AddUsers
 {
-    class Program
+    public class Program
     {
-        static void Main(string[] args)
+        public static void Main(string[] args)
         {
             var config = new ConfigManager().GetConfiguration();
             string connectionData;
@@ -29,7 +29,9 @@ namespace Research_GRPC_AddUsers
                 } while (true);
             }
             else
+            {
                 connectionData = config["HostURL"];
+            }
 
             var channel = GrpcChannel.ForAddress(connectionData);
             var client = new UsersHandler.UsersHandlerClient(channel);
@@ -53,14 +55,21 @@ namespace Research_GRPC_AddUsers
 
         static void BeginWork(CancellationToken token, UsersHandler.UsersHandlerClient client)
         {
-            while (true && !token.IsCancellationRequested)
+            var userModel = new UserModel()
+            {
+                FirstName = "Pchelovek"
+            };
+            var userModelWithKey = new UserModelWithKey()
+            {
+                Key = 5,
+                Model = userModel
+            };
+            while (!token.IsCancellationRequested)
             {
                 try
                 {
-                    client.AddUser(new UserModel()
-                    {
-                        FirstName = "Spam"
-                    });
+
+                    client.AddUser(userModelWithKey);
                 }
                 catch (RpcException e)
                 {

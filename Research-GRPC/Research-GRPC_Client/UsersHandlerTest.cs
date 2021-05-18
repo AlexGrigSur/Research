@@ -2,6 +2,7 @@
 using Grpc.Net.Client;
 using Research_GRPC;
 using System;
+using System.Threading.Tasks;
 
 namespace Research_GRPC_Client
 {
@@ -12,19 +13,18 @@ namespace Research_GRPC_Client
             var channel = GrpcChannel.ForAddress(connectionString);
             var client = new UsersHandler.UsersHandlerClient(channel);
 
-            GetRequest(client, 5);
+            GetSingleUser(client, 5);
             Console.WriteLine("*************");
-            GetRequest(client, 1);
+            GetSingleUser(client, 1);
             Console.WriteLine("*************");
-            SetRequest(client);
+            AddUser(client);
             Console.WriteLine("*************");
             GetAllUsersCollection(client);
             Console.WriteLine("*************");
             GetAllUsersStream(client);
-
         }
 
-        private void GetRequest(UsersHandler.UsersHandlerClient client, int id)
+        private void GetSingleUser(UsersHandler.UsersHandlerClient client, int id)
         {
             var userID = new UserNumber()
             {
@@ -32,19 +32,19 @@ namespace Research_GRPC_Client
             };
             try
             {
-                var reply = client.GetUsers(userID);
-                Console.WriteLine($"GetRequest result: FirstName - {reply.FirstName}");
+                var reply = client.GetSingleUser(userID);
+                Console.WriteLine($"GetSingleUser result: FirstName - {reply.FirstName}");
             }
             catch (RpcException e)
             {
                 string error = (e.StatusCode == StatusCode.NotFound)
                     ? "Empty result:"
                     : "Server is unavailable:";
-                Console.WriteLine("{0}",e.StatusCode);
+                Console.WriteLine(error + " {0}", e.StatusCode);
             }
             catch (Exception e)
             {
-                Console.WriteLine("Unhandled exception: {0}",e.Message);
+                Console.WriteLine("Unhandled exception: {0}", e.Message);
             }
         }
         private async void GetAllUsersStream(UsersHandler.UsersHandlerClient client)
@@ -56,32 +56,9 @@ namespace Research_GRPC_Client
                 {
                     while (await call.ResponseStream.MoveNext())
                     {
-                        var currentReply = call.ResponseStream.Current;
-                        Console.WriteLine($"GetAllUsersStream reply: FirstName - {currentReply.FirstName}");
+                        var reply = call.ResponseStream.Current;
+                        Console.WriteLine($"GetAllUsersStream reply: [{reply.Key}] {reply.Model.FirstName}");
                     }
-                }
-            }
-            catch (RpcException e)
-            {
-                string error = (e.StatusCode == StatusCode.NotFound)
-                    ? "Empty result:"
-                    : "Server is unavailable:";
-                Console.WriteLine(error + " {0}", e.StatusCode);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine("Unhandled exception: {0}",e.Message);
-            }
-        }
-        private /*async*/ void GetAllUsersCollection(UsersHandler.UsersHandlerClient client)
-        {
-            Console.WriteLine("GetAllUsersCollection request");
-            try
-            {
-                var result = client.GetAllUsersCollection(new Empty());//await client.GetAllUsersCollectionAsync(new Empty());
-                for (int i = 0; i < result.Model.Count; ++i)
-                {
-                    Console.WriteLine($"GetAllUsers reply: FirstName - {result.Model[i].FirstName}");
                 }
             }
             catch (RpcException e)
@@ -96,7 +73,31 @@ namespace Research_GRPC_Client
                 Console.WriteLine("Unhandled exception: {0}", e.Message);
             }
         }
-        private void SetRequest(UsersHandler.UsersHandlerClient client)
+        private /*async*/ void GetAllUsersCollection(UsersHandler.UsersHandlerClient client)
+        {
+            Console.WriteLine("GetAllUsersCollection request");
+            try
+            {
+                var reply = client.GetAllUsersCollection(new Empty());//await client.GetAllUsersCollectionAsync(new Empty());
+                for (int i = 0; i < reply.ModelsList.Count; ++i)
+                {
+                    Console.WriteLine($"GetAllUsers reply: [{reply.ModelsList[i].Key}] {reply.ModelsList[i].Model.FirstName}");
+                }
+            }
+            catch (RpcException e)
+            {
+                string error = (e.StatusCode == StatusCode.NotFound)
+                    ? "Empty result:"
+                    : "Server is unavailable:";
+                Console.WriteLine(error + " {0}", e.StatusCode);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Unhandled exception: {0}", e.Message);
+            }
+        }
+
+        private void AddUser(UsersHandler.UsersHandlerClient client)
         {
             UserModel model = new UserModel()
             {
@@ -105,11 +106,15 @@ namespace Research_GRPC_Client
                 Email = "is",
                 Password = "me"
             };
-
+            UserModelWithKey userModelWithKey = new UserModelWithKey()
+            {
+                Key = 1,
+                Model = model
+            };
             try
             {
-                var reply = client.AddUser(model);
-                Console.WriteLine($"SetRequest result: {reply.Id}");
+                var reply = client.AddUser(userModelWithKey);
+                Console.WriteLine($"Inserted successfully");
             }
             catch (RpcException e)
             {

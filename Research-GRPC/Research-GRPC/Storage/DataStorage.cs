@@ -7,23 +7,23 @@ namespace Research_GRPC.Storage
     public class DataStorage
     {
         private static DataStorage _instance;
-        private List<UserModel> _storage = new()
+        private Dictionary<int,UserModel> _storage = new()
         {
-            new UserModel
+            [1]=new UserModel
             {
                 FirstName = "Alex",
                 LastName = "Grigoryan",
                 Email = "alex.grig.sur@gmail.com",
                 Password = "11112222"
             },
-            new UserModel
+            [2]=new UserModel
             {
                 FirstName = "Stas",
                 LastName = "Boretsky",
                 Email = "tiChegoVolchara@porvu.ru",
                 Password = "7777777777777"
             },
-            new UserModel
+            [3]=new UserModel
             {
                 FirstName = "Zubenko",
                 LastName = "Mikhail-Petrovich",
@@ -40,24 +40,29 @@ namespace Research_GRPC.Storage
             }
             return _instance;
         }
+
         public UserModel? GetUser(int userNumber)
         {
-            if (userNumber < 0 || userNumber >= _storage.Count)
+            lock (_storage)
             {
-                return null;
+                UserModel result;
+                _storage.TryGetValue(userNumber, out result);
+                return result;
             }
-            return _storage[userNumber];
         }
-        public int AddUser(UserModel model)
+        public void AddUser(UserModelWithKey userModel)
         {
-            _storage.Add(model);
-            Console.WriteLine(_storage.Count - 1);
-            return (_storage.Count - 1);
+            lock (_storage)
+            {
+                _storage[userModel.Key] = userModel.Model;
+            }
         }
-        public List<UserModel> GetAllUsers()
+        public Dictionary<int,UserModel> GetAllUsers()
         {
-            var result = _storage.Select(x=>x).ToList();
-            return result;
+            lock (_storage)
+            {
+                return _storage.ToDictionary(entry => entry.Key, entry => entry.Value);
+            }
         }
     }
 }

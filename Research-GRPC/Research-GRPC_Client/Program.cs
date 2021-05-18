@@ -1,11 +1,9 @@
 ﻿using System;
-using Grpc.Net.Client;
-using Research_GRPC;
 
 namespace Research_GRPC_Client
 {
     // https://www.youtube.com/watch?v=QyxCX2GYHxk&ab_channel=IAmTimCorey
-    class Program
+    public class Program
     {
         static void Main(string[] args)
         {
@@ -27,10 +25,11 @@ namespace Research_GRPC_Client
                 } while (true);
             }
             else
+            {
                 connectionData = config["HostURL"];
+            }
 
             new UsersHandlerTest().BeginTest(connectionData);
-
             Console.ReadKey();
         }
     }

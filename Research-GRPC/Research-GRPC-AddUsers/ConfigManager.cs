@@ -27,9 +27,8 @@ namespace Research_GRPC_Client
                 try
                 {
                     File.Delete("appsettings.json");
-                    File.AppendAllText("appsettings.json", @"{""HostURL"":""" + hostURL + @"""}");
-                    //JsonSerializer.Serialize(@"{""HostURL"":""hostURL""}")); //, options)
-                    //JsonSerializer.Serialize(new {hostURL = hostURL}));
+                    var json = new AppSettingsJson(hostURL);
+                    File.AppendAllText("appsettings.json", JsonSerializer.Serialize(json));
                 }
                 catch (Exception e)
                 {

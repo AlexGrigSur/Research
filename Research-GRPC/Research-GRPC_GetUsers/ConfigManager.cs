@@ -23,23 +23,19 @@ namespace Research_GRPC_Client
                         break;
                     Console.WriteLine("Wrong Host address. Try again");
                 } while (true);
-
                 try
                 {
                     File.Delete("appsettings.json");
-                    File.AppendAllText("appsettings.json", @"{""HostURL"":""" + hostURL + @"""}");
-                    //JsonSerializer.Serialize(@"{""HostURL"":""hostURL""}")); //, options)
-                    //JsonSerializer.Serialize(new {hostURL = hostURL}));
+                    var json = new AppSettingsJson(hostURL);
+                    File.AppendAllText("appsettings.json", JsonSerializer.Serialize(json));
                 }
                 catch (Exception e)
                 {
                     Console.WriteLine(e);
                     return null;
                 }
-
                 config = GetConfigurationBuilder();
             }
-
             return config;
         }
 
@@ -64,15 +60,15 @@ namespace Research_GRPC_Client
             Console.WriteLine("Config file was found with data:");
             Console.WriteLine($"HostURL: {hostURL}");
             Console.WriteLine("Use this configuration? y/n");
-            return (Console.ReadLine().ToLower() == "y");
+            var readkey = Console.ReadKey();
+            return readkey.Key == ConsoleKey.Y;
         }
         private bool CheckHostURL(string field)
         {
-            if (field == null || field.Trim() == "")
+            if (field == null || field.Trim() == String.Empty)
             {
                 return false;
             }
-
             return Uri.IsWellFormedUriString(field, UriKind.Absolute);
         }
     }
