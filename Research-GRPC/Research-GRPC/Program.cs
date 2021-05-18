@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
+using Research_GRPC;
 
 namespace Research_GRPC
 {
@@ -9,7 +10,6 @@ namespace Research_GRPC
         public static void Main(string[] args)
         {
             CreateHostBuilder(args).Build().Run();
- 
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args)

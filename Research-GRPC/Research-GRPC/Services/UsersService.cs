@@ -1,10 +1,13 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using Grpc.Core;
 using Microsoft.Extensions.Logging;
 using Research_GRPC.Storage;
 
 namespace Research_GRPC
 {
+    // unite all exceptions ??
     public class UsersService : UsersHandler.UsersHandlerBase
     {
         private readonly ILogger<UsersService> _logger;
@@ -15,37 +18,92 @@ namespace Research_GRPC
 
         public override Task<UserModel> GetUsers(UserNumber userNumber, ServerCallContext context)
         {
-            var result = DataStorage.GetUser(userNumber.Id);
-            if (result == null)
+            try
             {
-                context.Status = new Status(StatusCode.NotFound, "Requested key not found");
+                var storage = DataStorage.GetInstance();
+                lock (storage)
+                {
+                    var result = storage.GetUser(userNumber.Id);
+                    if (result == null)
+                    {
+                        context.Status = new Status(StatusCode.NotFound, "Requested key not found");
+                        return Task.FromResult(new UserModel());
+                    }
+                    return Task.FromResult(result);
+                }
+            }
+            catch (Exception e)
+            {
+                context.Status = new Status(StatusCode.Internal, e.Message);
+                Console.WriteLine(context.Status);
                 return Task.FromResult(new UserModel());
             }
-            return Task.FromResult(result);
         }
         public override Task<UserNumber> AddUser(UserModel model, ServerCallContext context)
         {
-            return Task.FromResult(new UserNumber()
+            try
             {
-                Id = DataStorage.AddUser(model)
-            });
+                var storage = DataStorage.GetInstance();
+                lock (storage)
+                {
+                    return Task.FromResult(new UserNumber()
+                    {
+                        Id = storage.AddUser(model)
+                    });
+                }
+            }
+            catch (Exception e)
+            {
+                context.Status = new Status(StatusCode.Internal, e.Message);
+                Console.WriteLine(context.Status);
+                return Task.FromResult(new UserNumber());
+            }
+
         }
         public override Task<UserQuery> GetAllUsersCollection(Empty request, ServerCallContext context)
         {
-            return Task.FromResult(new UserQuery()
+            try
             {
-                ModelsList = { DataStorage.GetAllUsers() }
-            });
+                var storage = DataStorage.GetInstance();
+                lock (storage)
+                {
+                    return Task.FromResult(new UserQuery()
+                    {
+                        ModelsList = { storage.GetAllUsers() }
+                    });
+                }
+            }
+            catch (Exception e)
+            {
+                context.Status = new Status(StatusCode.Internal, e.Message);
+                Console.WriteLine(context.Status);
+                return Task.FromResult(new UserQuery());
+            }
         }
-
         public override async Task GetAllUsersStream(Empty request, IServerStreamWriter<UserModel> responseStream,
         ServerCallContext context)
         {
-            var result = DataStorage.GetAllUsers();
-            for (int i = 0; i < result.Count; ++i)
+            try
             {
-                await Task.Delay(5000);
-                await responseStream.WriteAsync(result[i]);
+                var storage = DataStorage.GetInstance();
+                List<UserModel> result;
+                lock (storage)
+                {
+                    result = storage.GetAllUsers();
+                }
+                if (result != null)
+                {
+                    for (int i = 0; i < result.Count; ++i)
+                    {
+                        await Task.Delay(2000);
+                        await responseStream.WriteAsync(result[i]);
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                context.Status = new Status(StatusCode.Internal, e.Message);
+                Console.WriteLine(context.Status);
             }
         }
     }
